@@ -67,15 +67,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     },
     links: isDev
       ? [
-          <Link to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>openAPI 文档</span>
-          </Link>,
-          <Link to="/~docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
+        <Link to="/api/swagger/swagger-ui.html" target="_blank">
+          <LinkOutlined />
+          <span>后端接口文档</span>
+        </Link>,
+        <Link to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>openAPI 文档</span>
+        </Link>,
+        <Link to="/~docs">
+          <BookOutlined />
+          <span>业务组件文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面

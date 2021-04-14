@@ -19,29 +19,53 @@
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',
-    component: './Welcome',
+    component: './OJWelcome',
   },
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
-      },
-    ],
+    path: "/problemList",
+    name: "problemList",
+    icon: "smile",
+    component: "./ProblemList"
   },
   {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
+    path: "/problemPull",
+    name: "problemPull",
+    icon: "smile",
+    component: "./ProblemPull"
   },
+  {
+    path: '/problem/:problemId',
+    hideInMenu:true,
+    name: 'problem',
+    component: './Problem',
+  },
+  {
+    path: "/status",
+    name: "status",
+    icon: "smile",
+    component: "./Status"
+  },
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   icon: 'crown',
+  //   access: 'canAdmin',
+  //   component: './Admin',
+  //   routes: [
+  //     {
+  //       path: '/admin/sub-page',
+  //       name: 'sub-page',
+  //       icon: 'smile',
+  //       component: './Welcome',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'list.table-list',
+  //   icon: 'table',
+  //   path: '/list',
+  //   component: './TableList',
+  // },
   {
     path: '/',
     redirect: '/welcome',

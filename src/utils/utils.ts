@@ -18,3 +18,14 @@ export const isAntDesignProOrDev = (): boolean => {
   }
   return isAntDesignPro();
 };
+
+
+
+
+import { notification } from 'antd';
+export const successInfo = (description: string,message: string) => {
+  notification['success']({
+    message,
+    description
+  });
+};

@@ -49,4 +49,8 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  'menu.problem': '题目',
+  'menu.problemList': '题目列表',
+  'menu.status': '提交状态',
+  'menu.problemPull': '拉取新的题目',
 };
