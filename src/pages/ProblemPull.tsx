@@ -6,6 +6,7 @@ import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import request from 'umi-request';
 import {successInfo} from '../utils/utils'
 
+
 const columns: ProColumns[] = [
     {
         dataIndex: 'index',
