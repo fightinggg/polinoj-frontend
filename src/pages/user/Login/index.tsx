@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
+import { login } from '@/services/polin-oj/login';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
@@ -34,6 +34,7 @@ const goto = () => {
   if (!history) return;
   setTimeout(() => {
     const { query } = history.location;
+    console.log(history.location)
     const { redirect } = query as { redirect: string };
     history.push(redirect || '/');
   }, 10);
@@ -85,10 +86,10 @@ const Login: React.FC = () => {
           <div className={styles.header}>
             <Link to="/">
               <img alt="logo" className={styles.logo} src="/logo.svg" />
-              <span className={styles.title}>Ant Design</span>
+              <span className={styles.title}>Polin OJ</span>
             </Link>
           </div>
-          <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+          <div className={styles.desc}>Polin OJ 是地大最具影响力的 Web OJ</div>
         </div>
 
         <div className={styles.main}>
@@ -124,13 +125,13 @@ const Login: React.FC = () => {
                   defaultMessage: '账户密码登录',
                 })}
               />
-              <Tabs.TabPane
+              {/* <Tabs.TabPane
                 key="mobile"
                 tab={intl.formatMessage({
                   id: 'pages.login.phoneLogin.tab',
                   defaultMessage: '手机号登录',
                 })}
-              />
+              /> */}
             </Tabs>
 
             {status === 'error' && loginType === 'account' && (
@@ -151,7 +152,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.username.placeholder',
-                    defaultMessage: '用户名: admin or user',
+                    defaultMessage: '用户名: admin or fightinggg',
                   })}
                   rules={[
                     {
@@ -173,7 +174,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
-                    defaultMessage: '密码: ant.design',
+                    defaultMessage: '密码: 88888888',
                   })}
                   rules={[
                     {

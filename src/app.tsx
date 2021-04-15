@@ -6,7 +6,7 @@ import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { currentUser as queryCurrentUser } from './services/polin-oj/user';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -26,23 +26,23 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async () => {
-    // try {
-    //   const currentUser = await queryCurrentUser();
-    //   return currentUser;
-    // } catch (error) {
-    //   history.push(loginPath);
-    // }
+    try {
+      const currentUser = await queryCurrentUser();
+      return currentUser;
+    } catch (error) {
+      history.push(loginPath);
+    }
     return undefined;
   };
-  // // 如果是登录页面，不执行
-  // if (history.location.pathname !== loginPath) {
-  //   const currentUser = await fetchUserInfo();
-  //   return {
-  //     fetchUserInfo,
-  //     currentUser,
-  //     settings: {},
-  //   };
-  // }
+  // 如果是登录页面，不执行
+  if (history.location.pathname !== loginPath) {
+    const currentUser = await fetchUserInfo();
+    return {
+      fetchUserInfo,
+      currentUser,
+      settings: {},
+    };
+  }
   return {
     fetchUserInfo,
     settings: {},
@@ -59,11 +59,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      // const { location } = history;
-      // // 如果没有登录，重定向到 login
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath);
-      // }
+      const { location } = history;
+      // 如果没有登录，重定向到 login
+      if (!initialState?.currentUser && location.pathname !== loginPath) {
+        history.push(loginPath);
+      }
     },
     links: isDev
       ? [

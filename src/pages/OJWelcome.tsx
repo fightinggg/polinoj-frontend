@@ -5,7 +5,6 @@ import { useIntl } from 'umi';
 
 
 export default (): React.ReactNode => {
-  const intl = useIntl();
   return (
     <PageContainer>
       <Card>
