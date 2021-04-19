@@ -53,4 +53,8 @@ export default {
   'menu.problemList': '题目列表',
   'menu.status': '提交状态',
   'menu.problemPull': '拉取新的题目',
+  'menu.center': '个人中心',
+  'menu.settings': '个人设置',
+  'menu.contextList': '比赛列表',
+  'menu.context': '比赛',
 };

@@ -122,7 +122,13 @@ const errorHandler = (error: ResponseError) => {
     });
   }
 
-  if (!response) {
+  //console.log(error.data)
+  if(error.data!=null){
+    notification.error({
+      description: error.data.msg,
+      message: '错误代码:'+error.data.code,
+    });
+  } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
       message: '网络异常',

@@ -12,8 +12,20 @@
             component: './user/Login',
           },
         ],
-      },
+      }
     ],
+  },
+  {
+    hideInMenu:true,
+    path: '/account/center',
+    name: 'center',
+    component: './user/Center'
+  },
+  {
+    hideInMenu:true,
+    path: '/account/settings',
+    name: 'settings',
+    component: './user/settings'
   },
   {
     path: '/welcome',
@@ -28,17 +40,30 @@
     component: "./ProblemList"
   },
   {
-    path: "/problemPull",
-    name: "problemPull",
-    icon: "smile",
-    component: "./ProblemPull"
-  },
-  {
     path: '/problem/:problemId',
     hideInMenu:true,
     name: 'problem',
     component: './Problem',
   },
+  {
+    path: "/contextList",
+    name: "contextList",
+    icon: "smile",
+    component: "./ContextList"
+  },
+  {
+    path: '/context/:contextId',
+    hideInMenu:true,
+    name: 'context',
+    component: './Context',
+  },
+  {
+    path: "/problemPull",
+    name: "problemPull",
+    icon: "smile",
+    component: "./ProblemPull"
+  },
+
   {
     path: "/status",
     name: "status",

@@ -1,7 +1,6 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Alert } from 'antd';
-import { useIntl } from 'umi';
 
 
 export default (): React.ReactNode => {
@@ -19,6 +18,12 @@ export default (): React.ReactNode => {
           }}
         />
         Polin OJ, 是一款一站式OJ，在Polin OJ上，你能向所有的其他OJ进行提交，更多信息请关注 @Polin OJ
+
+        <br></br>
+        <a href="https://github.com/fightinggg/polinoj-backend" target="_post"> 后端代码开源</a>
+        <br></br>
+
+        <a href="https://github.com/fightinggg/polinoj-frontend" target="_post"> 前端代码开源</a>
       </Card>
 
     </PageContainer>

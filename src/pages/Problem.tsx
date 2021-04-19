@@ -18,7 +18,7 @@ const successInfo = (description: string,message: string) => {
   };
   
 
-export default class Problem extends React.Component {
+export class ProblemComponet extends React.Component {
     state = {
         problemId: null,
         title: null,
@@ -36,13 +36,15 @@ export default class Problem extends React.Component {
         memory: null
     }
 
+    props = {
+        problemId: null,
+    }
+
     static codeInputId = "codeInput"
 
 
     async componentDidMount() {
-        const path = this.props.location.pathname.split('/')
-        const problemId = path.lastItem
-        const result = await fetch(`/api/problem?problemId=${problemId}`)
+        const result = await fetch(`/api/problem?problemId=${this.props.problemId}`)
         this.setState(await result.json())
     }
 
@@ -124,3 +126,9 @@ export default class Problem extends React.Component {
         );
     }
 }
+
+
+
+export default function Problem(props:any) {
+    return <ProblemComponet problemId={props.location.pathname.split('/').lastItem}></ProblemComponet>
+  }
