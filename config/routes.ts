@@ -36,7 +36,7 @@
   {
     path: "/problemList",
     name: "problemList",
-    icon: "smile",
+    icon: "icon-book",
     component: "./ProblemList"
   },
   {
@@ -48,7 +48,7 @@
   {
     path: "/contextList",
     name: "contextList",
-    icon: "smile",
+    icon: "icon-competition",
     component: "./ContextList"
   },
   {
@@ -60,14 +60,14 @@
   {
     path: "/problemPull",
     name: "problemPull",
-    icon: "smile",
+    icon: "icon-add",
     component: "./ProblemPull"
   },
 
   {
     path: "/status",
     name: "status",
-    icon: "smile",
+    icon: "icon-statement",
     component: "./Status"
   },
   // {

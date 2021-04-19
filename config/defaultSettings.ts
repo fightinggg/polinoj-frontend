@@ -15,7 +15,7 @@ const Settings: LayoutSettings & {
   title: 'Polin OJ 在线评测系统',
   pwa: false,
   logo: 'https://icpc.global/static/media/icpc-medium5.5c857487.png',
-  iconfontUrl: '',
+  iconfontUrl: '//at.alicdn.com/t/font_2497915_9c0hkkems39.js',
 };
 
 export default Settings;
