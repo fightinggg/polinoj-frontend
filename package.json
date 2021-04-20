@@ -72,7 +72,8 @@
     "showdown": "^1.9.1",
     "showdown-highlight": "^2.1.7",
     "umi": "^3.4.0",
-    "umi-request": "^1.0.8"
+    "umi-request": "^1.0.8",
+    "webpack": "^4.46.0"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.0.2",
