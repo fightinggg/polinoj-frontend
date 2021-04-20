@@ -25,7 +25,7 @@
     hideInMenu:true,
     path: '/account/settings',
     name: 'settings',
-    component: './user/settings'
+    component: './user/Settings'
   },
   {
     path: '/welcome',
