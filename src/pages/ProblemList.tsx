@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { Button, Tag, Space, Menu, Dropdown } from 'antd';
+import { useRef } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import request from 'umi-request';
@@ -41,31 +41,14 @@ const columns: ProColumns[] = [
         title: '操作',
         valueType: 'option',
         render: (text, record, _, action) => [
-            <a key="editable" onClick={() => {
-                action.startEditable?.(record.id);
-            }}>编辑</a>,
             <a href={'/problem/' + record.problemId} rel="noopener noreferrer" key="view">
                 查看
-      </a>,
-            <TableDropdown
-                key="actionGroup"
-                onSelect={() => action.reload()}
-                menus={[
-                    { key: 'copy', name: '复制' },
-                    { key: 'delete', name: '删除' },
-                ]}
-            />,
+             </a>,
         ],
     },
 ];
 
-const menu = (
-    <Menu>
-        <Menu.Item key="1">1st item</Menu.Item>
-        <Menu.Item key="2">2nd item</Menu.Item>
-        <Menu.Item key="3">3rd item</Menu.Item>
-    </Menu>
-);
+
 
 export default () => {
     const actionRef = useRef<ActionType>();
@@ -115,12 +98,7 @@ export default () => {
             toolBarRender={() => [
                 <Button key="button" icon={<PlusOutlined />} type="primary">
                     新建
-                </Button>,
-                <Dropdown key="menu" overlay={menu}>
-                    <Button>
-                        <EllipsisOutlined />
-                    </Button>
-                </Dropdown>,
+                </Button>
             ]}
         />
     );

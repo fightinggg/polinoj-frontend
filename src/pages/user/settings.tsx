@@ -1,7 +1,8 @@
 import React from 'react';
 import { updateUser, currentUser } from '@/services/polin-oj/user'
 
-import { Form, Input,  Button } from 'antd';
+import { Form, Input, Button } from 'antd';
+import { successInfo } from '@/utils/utils';
 
 
 const layout = {
@@ -26,14 +27,17 @@ export default class Problem extends React.Component {
 
     async componentDidMount() {
         const user = await currentUser();
-        
+
         this.setState(user)
     }
 
     finish = async (values: any) => {
         const user = await currentUser();
         values.user.id = user.id;
-        updateUser(values.user);
+        const res = await updateUser(values.user);
+        if (res != null) {
+            successInfo("修改成功", "恭喜你账号信息修改成功了！");
+        }
     }
 
     render() {

@@ -5,22 +5,23 @@ import { Input } from 'antd';
 const { TextArea } = Input;
 import { Button, notification } from 'antd';
 import { Space, Card } from 'antd';
-import { request } from 'umi';
 import { PageHeader } from 'antd';
 
-import {CodePreview} from './../utils/code'
+import { CodePreview } from './../utils/code'
+import { getProblem } from '@/services/polin-oj/problem';
+import { submitProblems } from '@/services/polin-oj/submit';
 
-const successInfo = (description: string,message: string) => {
+const successInfo = (description: string, message: string) => {
     notification['success']({
-      message,
-      description
+        message,
+        description
     });
-  };
-  
+};
+
 
 export class ProblemComponet extends React.Component {
     state = {
-        problemId: null,
+        problemId: 0,
         title: null,
         description: null,
         input: null,
@@ -37,42 +38,32 @@ export class ProblemComponet extends React.Component {
     }
 
     props = {
-        problemId: null,
+        problemId: 0,
     }
 
     static codeInputId = "codeInput"
 
 
     async componentDidMount() {
-        const result = await fetch(`/api/problem?problemId=${this.props.problemId}`)
-        this.setState(await result.json())
+        const result = await getProblem(this.props.problemId)
+        this.setState(result)
     }
 
 
     async submitCode(problemId: number) {
-        const code = document.getElementById(Problem.codeInputId)?.value
+        const code = document.getElementById(ProblemComponet.codeInputId)?.value
         const body = {
             code: code,
             lang: "c++",
             problemId,
-
         }
 
-        try {
-            const result = await request<any>('/api/problem/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: body,
-                ...({}),
-            });
-            successInfo('提交成功','你的提交成功了哦,三秒后为您跳转到提交结果页面')
+        const result = await submitProblems(body);
+        if (result != null) {
+            successInfo('提交成功', '你的提交成功了哦,三秒后为您跳转到提交结果页面')
             setTimeout(() => {
-                window.location.href="/status"; 
+                window.location.href = "/status";
             }, 3000);
-        } catch (error) {
-            successInfo('提交失败','你的提交失败了哦')
         }
     }
 
@@ -86,7 +77,7 @@ export class ProblemComponet extends React.Component {
                     title={this.state.title}
                 />
 
-                <Card title="输入描述"  style={{ width: '100%' }}>
+                <Card title="输入描述" style={{ width: '100%' }}>
                     <ReactMarkdown source={this.state.input} />
                 </Card>
 
@@ -112,7 +103,7 @@ export class ProblemComponet extends React.Component {
 
                 <Card title="代码框">
                     <Card bordered={false} >
-                        <TextArea rows={20} id={Problem.codeInputId} />
+                        <TextArea rows={20} id={ProblemComponet.codeInputId} />
                     </Card>
                     <Card bordered={false} >
                         <Col span={4} offset={10} >
@@ -129,6 +120,6 @@ export class ProblemComponet extends React.Component {
 
 
 
-export default function Problem(props:any) {
+export default function Problem(props: any) {
     return <ProblemComponet problemId={props.location.pathname.split('/').lastItem}></ProblemComponet>
-  }
+}

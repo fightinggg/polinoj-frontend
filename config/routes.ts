@@ -16,13 +16,13 @@
     ],
   },
   {
-    hideInMenu:true,
+    hideInMenu: true,
     path: '/account/center',
     name: 'center',
     component: './user/Center'
   },
   {
-    hideInMenu:true,
+    hideInMenu: true,
     path: '/account/settings',
     name: 'settings',
     component: './user/Settings'
@@ -41,7 +41,7 @@
   },
   {
     path: '/problem/:problemId',
-    hideInMenu:true,
+    hideInMenu: true,
     name: 'problem',
     component: './Problem',
   },
@@ -53,7 +53,7 @@
   },
   {
     path: '/context/:contextId',
-    hideInMenu:true,
+    hideInMenu: true,
     name: 'context',
     component: './Context',
   },
@@ -85,12 +85,12 @@
   //     },
   //   ],
   // },
-  // {
-  //   name: 'list.table-list',
-  //   icon: 'table',
-  //   path: '/list',
-  //   component: './TableList',
-  // },
+  {
+    name: 'list.table-list',
+    icon: 'table',
+    path: '/list',
+    component: './TableList',
+  },
   {
     path: '/',
     redirect: '/welcome',
