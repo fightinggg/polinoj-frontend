@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { Button, Tag, Space, Menu, Dropdown } from 'antd';
+import { Button, Menu, Dropdown } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import request from 'umi-request';
 import {successInfo} from '../utils/utils'
+import { pullProblem } from '@/services/polin-oj/problem';
 
 
 const columns: ProColumns[] = [
@@ -39,22 +40,17 @@ const columns: ProColumns[] = [
         valueType: 'option',
         render: (text, record, _, action) => [
             <a onClick={() => {
-                request<any>('/api/problem/pull',{
-                    method: 'POST',
-                    data:{
-                        source: record.source,
-                        sourceId: record.sourceId,
-                    }
-                }).then((result)=>{
+                pullProblem(record.source,record.sourceId)
+                .then((result)=>{
                     successInfo('拉取成功',`恭喜你拉取${record.source}的题目${result.title}成功，三秒后即将为您跳转到新的题目`)
                     setTimeout(() => {
                         window.location.href="/problem/"+result.problemId; 
                     }, 3000);
                 })
             }}>拉取</a>,
-            <a href={record.url} target="_post" rel="noopener noreferrer" key="view">
-                查看
-            </a>,
+            // <a href={record.url} target="_post" rel="noopener noreferrer" key="view">
+            //     查看
+            // </a>,
         ],
     },
 ];
@@ -78,7 +74,7 @@ export default () => {
                     params = {
                         source: params.source || 'hdu',
                         pageIndex: params.current,
-                        pateSize: params.pageSize,
+                        pageSize: params.pageSize,
                     }
                     var result = await request('/api/problem/remote', {
                         method: 'POST',
@@ -114,7 +110,7 @@ export default () => {
                 },
             }}
             pagination={{
-                pageSize: 10
+                pageSize: 100
             }}
             dateFormatter="string"
             headerTitle="题目列表"

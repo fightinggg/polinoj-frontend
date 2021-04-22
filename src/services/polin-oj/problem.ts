@@ -12,3 +12,18 @@ export async function getProblem(problemId: number) {
     });
   })
 }
+
+
+
+export async function pullProblem(source: string, sourceId: string) {
+  return await dealWithHttpResult(async () => {
+    return await request<any>('/api/problem/pull', {
+      method: 'POST',
+      data: {
+        source,
+        sourceId,
+      }
+    });
+  })
+}
+
