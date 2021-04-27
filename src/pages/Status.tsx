@@ -48,14 +48,12 @@ const columns: ProColumns[] = [
         width: 48,
     },
     {
-        title: '题目来源',
-        dataIndex: 'problemSource',
-        ellipsis: true,
-    },
-    {
-        title: '题目来源ID',
+        title: '题目ID',
         dataIndex: 'problemId',
         ellipsis: true,
+        render: (text,record) => {
+            return <a href={'/problem/' + record.problemId}>{record.problemId}</a>
+        }
     },
     {
         title: '状态',

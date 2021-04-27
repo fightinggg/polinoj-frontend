@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Alert, Space, message, Tabs } from 'antd';
 import React, { useState } from 'react';
-import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ProFormCaptcha, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import { login } from '@/services/polin-oj/login';
@@ -278,9 +278,11 @@ const Login: React.FC = () => {
                 marginBottom: 24,
               }}
             >
-              <ProFormCheckbox noStyle name="autoLogin">
+              {/* <ProFormCheckbox noStyle name="autoLogin">
                 <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
-              </ProFormCheckbox>
+              </ProFormCheckbox> */}
+              <a href='/user/register'>   注册</a>
+
               <a
                 style={{
                   float: 'right',
@@ -296,6 +298,7 @@ const Login: React.FC = () => {
             <TaobaoCircleOutlined className={styles.icon} />
             <WeiboCircleOutlined className={styles.icon} />
           </Space>
+         
         </div>
       </div>
       <Footer />
