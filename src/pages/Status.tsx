@@ -63,14 +63,35 @@ const columns: ProColumns[] = [
         valueType: 'select',
         valueEnum: {
             all: { text: '全部', status: 'Default' },
-            WA: {
-                text: 'WA',
-                status: 'Error',
-            },
             AC: {
                 text: 'AC',
                 status: 'Success',
                 disabled: true,
+            },
+            WA: {
+                text: 'WA',
+                status: 'Error',
+            },
+            TLE: {
+                text: 'TLE',
+                status: 'Error',
+            },
+            MLE: {
+                text: 'MLE',
+                status: 'Error',
+            },
+            CE: {
+                text: 'CE',
+                status: 'Error',
+            },
+            RE: {
+                text: 'RE',
+                status: 'Error',
+            },
+         
+            MISS: {
+                text: 'MISS',
+                status: 'Processing',
             },
             '?': {
                 text: '?',

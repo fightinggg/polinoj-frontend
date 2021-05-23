@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col } from 'antd';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Col, Upload } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { createProblem, pageProblem } from '@/services/polin-oj/problem';
@@ -8,66 +8,90 @@ import { ModalForm, ProFormDigit, ProFormList, ProFormSlider, ProFormText, ProFo
 import { PageContainer } from '@ant-design/pro-layout';
 import { useState } from 'react';
 import { Row } from 'antd'
+import { List } from 'antd';
+import { previewTestSample } from '@/services/polin-oj/sample';
 // import ReactMarkdown from 'react-markdown'
-
-const columns: ProColumns[] = [
-    {
-        dataIndex: 'index',
-        valueType: 'indexBorder',
-        width: 48,
-    },
-    {
-        title: '题目id',
-        dataIndex: 'problemId',
-        ellipsis: true,
-    },
-    {
-        title: '题目名字',
-        dataIndex: 'title',
-        ellipsis: true,
-    },
-    {
-        title: '题目来源',
-        dataIndex: 'source',
-        ellipsis: true,
-    },
-    {
-        title: '题目来源ID',
-        dataIndex: 'sourceId',
-        ellipsis: true,
-    },
-    {
-        title: '出题人',
-        dataIndex: 'author',
-        hideInSearch: true,
-    },
-    {
-        title: '总通过次数',
-        dataIndex: 'acCount',
-        hideInSearch: true,
-    },
-    {
-        title: '总提交次数',
-        dataIndex: 'allCount',
-        hideInSearch: true,
-    },
-    {
-        title: '操作',
-        valueType: 'option',
-        render: (text, record, _, action) => [
-            <a href={'/problem/' + record.problemId} rel="noopener noreferrer" key="view">
-                查看
-             </a>,
-        ],
-    },
-];
 
 
 
 export default () => {
     const actionRef = useRef<ActionType>();
     const [createProblemVisible, handleCreateProblemVisible] = useState<boolean>(false);
-    // const [problem, handleProblem] = useState<any>({});
+
+    const [updateProblemVisible, handleUpdateProblemVisible] = useState<boolean>(false);
+    const [updateProblemId, handleUpdateProblemId] = useState<string>('');
+    const [updateSample, handleUpdateSample] = useState<any>([]);
+
+
+    const columns: ProColumns[] = [
+        {
+            dataIndex: 'index',
+            valueType: 'indexBorder',
+            width: 48,
+        },
+        {
+            title: '题目id',
+            dataIndex: 'problemId',
+            ellipsis: true,
+        },
+        {
+            title: '题目名字',
+            dataIndex: 'title',
+            ellipsis: true,
+        },
+        {
+            title: '题目来源',
+            dataIndex: 'source',
+            ellipsis: true,
+        },
+        {
+            title: '题目来源ID',
+            dataIndex: 'sourceId',
+            ellipsis: true,
+        },
+        {
+            title: '出题人',
+            dataIndex: 'author',
+            hideInSearch: true,
+        },
+        {
+            title: '总通过次数',
+            dataIndex: 'acCount',
+            hideInSearch: true,
+        },
+        {
+            title: '总提交次数',
+            dataIndex: 'allCount',
+            hideInSearch: true,
+        },
+        {
+            title: '查看',
+            valueType: 'option',
+            render: (text, record, _, action) => [
+
+                <Button type="link" href={'/problem/' + record.problemId} size={'small'}>
+                    查看
+                </Button>,
+            ],
+        },
+        {
+            title: '编辑',
+            valueType: 'option',
+            render: (text, record, _, action) => [
+                <Button type="link" onClick={
+                    async () => {
+                        const res = await previewTestSample(record.problemId);
+                        handleUpdateSample(res.filenames||['没有测试数据'])
+                        handleUpdateProblemId(record.problemId)
+                        handleUpdateProblemVisible(true)
+                    }
+                } size={'small'}>
+                    编辑
+                </Button>
+
+            ],
+        },
+    ];
 
     return (
         <PageContainer>
@@ -78,11 +102,11 @@ export default () => {
                 onVisibleChange={handleCreateProblemVisible}
                 onFinish={async (value) => {
                     const result = await createProblem(value);
-                    if(result !=null){
+                    if (result != null) {
                         console.log(result);
                     }
                 }}
-                // onValuesChange={handleProblem}
+            // onValuesChange={handleProblem}
             >
                 <ProFormText
                     label="题目名称"
@@ -188,7 +212,7 @@ export default () => {
                         rules={[{ required: true }]}
                         placeholder={'样例输入'}
                         name="input"
-                        width = 'xl'
+                        width='xl'
                     />
 
                     <ProFormTextArea
@@ -196,11 +220,53 @@ export default () => {
                         rules={[{ required: true }]}
                         placeholder={'样例输出'}
                         name="output"
-                        width = 'xl'
+                        width='xl'
                     />
                 </ProFormList>
 
+
             </ModalForm>
+
+
+            <ModalForm
+                title={'编辑测试数据集'}
+                width="80%"
+                visible={updateProblemVisible}
+                onVisibleChange={handleUpdateProblemVisible}
+                onFinish={async ()=>handleUpdateProblemVisible(false)}
+            >
+                <Upload {...{
+                    name: 'file',
+                    action: '/api/cos/upload/sample/' + updateProblemId,
+                    maxCount: 1,
+                    onChange(info) {
+                        if (info.file?.response) {
+                            if (info.file.response.success) {
+                                handleUpdateSample(info.file.response.data.filenames)
+                            } else {
+                                handleUpdateSample(['文件有错误，上传失败'])
+                            }
+                        }
+                    }
+                }}>
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+
+                <List
+                    itemLayout="horizontal"
+                    dataSource={updateSample}
+                    size={'small'}
+                    renderItem={item => (
+                        <List.Item>
+                            {item}
+                        </List.Item>
+                    )}
+                />
+
+
+
+            </ModalForm>
+
 
             <ProTable
                 columns={columns}
