@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
-import { Col, Dropdown, Menu } from 'antd';
+import React from 'react'
+import { Col, Row } from 'antd';
 const ReactMarkdown = require('react-markdown')
-import { Input } from 'antd';
-const { TextArea } = Input;
-import { Button, notification } from 'antd';
+import { notification } from 'antd';
 import { Space, Card } from 'antd';
 import { PageHeader } from 'antd';
 
-import { CodePreview } from './../utils/code'
 import { getProblem } from '@/services/polin-oj/problem';
 import { submitProblems } from '@/services/polin-oj/submit';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import ProForm, { ProFormSelect } from '@ant-design/pro-form';
+import Title from 'antd/lib/typography/Title';
+import Paragraph from 'antd/lib/typography/Paragraph';
 
 const successInfo = (description: string, message: string) => {
     notification['success']({
@@ -54,12 +53,12 @@ export class ProblemComponet extends React.Component {
 
     async componentDidMount() {
         const result = await getProblem(this.props.problemId)
-        this.setState({problem: result})
+        this.setState({ problem: result })
     }
 
 
-    async submitCode(body:any) {
-        body.problemId=this.state.problem.problemId
+    async submitCode(body: any) {
+        body.problemId = this.state.problem.problemId
 
         const result = await submitProblems(body);
         if (result != null) {
@@ -80,68 +79,64 @@ export class ProblemComponet extends React.Component {
 
 
         return (
-            <Space direction="vertical" size={20} style={{ width: '100%' }}>
+            <Row >
+                <Col span={12}>
+                    <Card>
+                        <Space direction="vertical" size={20} style={{ width: '100%', height: '30%' }}>
+                            <PageHeader
+                                className="site-page-header"
+                                onBack={() => null}
+                                title={this.state.problem.title}
+                            />
+                            <Title level={4}>输入描述</Title>
+                            <ReactMarkdown source={this.state.problem.input} />
+                            <Title level={4}>输出描述</Title>
+                            <ReactMarkdown source={this.state.problem.output} />
+                            <Title level={4}>输入样例</Title>
+                            <Paragraph copyable={{ tooltips: false }}>
+                                <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].input }} />
+                            </Paragraph>
+                            <Title level={4}>输出样例</Title>
+                            <Paragraph copyable={{ tooltips: false }} code={true}>
+                                <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].output }} />
+                            </Paragraph>
+                        </Space >
+                    </Card>
 
-                <PageHeader
-                    className="site-page-header"
-                    onBack={() => null}
-                    title={this.state.problem.title}
-                />
-
-                <Card title="输入描述" style={{ width: '100%' }}>
-                    <ReactMarkdown source={this.state.problem.input} />
-                </Card>
-
-                <Card title="输出描述">
-                    <ReactMarkdown source={this.state.problem.output} />
-                </Card>
-
-
-                <Card title="输入样例">
-                    <CodePreview>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].input }} />
-                    </CodePreview>
-                </Card>
-
-                <Card title="输出样例">
-                    <CodePreview>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].output }} />
-                    </CodePreview>
-                </Card>
-
-
-     
-
-                <Card title="代码框">
-                    <ProForm
-                        onFinish={
-                            async (v)=>{
-                                v.code=this.state.code.code;
-                                this.submitCode(v);
-                            }
-                        }
-                        onValuesChange={
-                            async (v) => {
-                                if (v.language != undefined) {
-                                    this.setState({
-                                        code: {
-                                            lang: v.language,
-                                            code: this.state.code.code
-                                        }
-                                    })
+                </Col>
+                <Col span={12}>
+                    <Card>
+                        <ProForm
+                            onFinish={
+                                async (v) => {
+                                    v.code = this.state.code.code;
+                                    this.submitCode(v);
                                 }
                             }
-                        }
-                    >
-                        <ProFormSelect
-                            name="language"
-                            label="language"
-                            valueEnum={{
-                                cpp: 'C/C++',
-                                java: 'Java',
-                            }}
-                            rules={[{ required: true, message: 'Please select your language!' }]}
-                        />
+                            onValuesChange={
+                                async (v) => {
+                                    if (v.language != undefined) {
+                                        this.setState({
+                                            code: {
+                                                lang: v.language,
+                                                code: this.state.code.code
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        >
+                            <ProFormSelect
+                                name="language"
+                                label="language"
+                                valueEnum={{
+                                    cpp: 'C/C++',
+                                    java: 'Java',
+                                }}
+                                rules={[{ required: true, message: 'Please select your language!' }]}
+                            />
+                        </ProForm>
+                        <br></br>
                         <MonacoEditor
                             height="600"
                             language={this.state.code.lang}
@@ -154,15 +149,14 @@ export class ProblemComponet extends React.Component {
                                     }
                                 })
                             }}
+
                         />
-                        <br></br>
-                    </ProForm>
-                </Card>
-            </Space >
+                    </Card>
+                </Col>
+            </Row>
         );
     }
 }
-
 
 
 export default function Problem(props: any) {
