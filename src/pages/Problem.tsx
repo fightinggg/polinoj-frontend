@@ -20,9 +20,12 @@ const successInfo = (description: string, message: string) => {
 };
 
 
+interface ProblemProps {
+    problemId: 0,
+}
 
 
-export class ProblemComponet extends React.Component {
+export class ProblemComponet extends React.Component<ProblemProps> {
     state = {
         problem: {
             problemId: 0,
@@ -44,10 +47,6 @@ export class ProblemComponet extends React.Component {
             lang: 'cpp',
             code: ''
         }
-    }
-
-    props = {
-        problemId: 0,
     }
 
 
@@ -110,7 +109,7 @@ export class ProblemComponet extends React.Component {
                             onFinish={
                                 async (v) => {
                                     v.code = this.state.code.code;
-                                    this.submitCode(v);
+                                    await this.submitCode(v);
                                 }
                             }
                             onValuesChange={

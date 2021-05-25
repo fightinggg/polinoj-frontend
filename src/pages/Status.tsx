@@ -1,26 +1,62 @@
 import React, { useRef } from 'react';
-import { Modal } from 'antd';
+import { Button, Card, Col, Modal, Row } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { getSubmit, pageStatus } from './../services/polin-oj/submit'
 import { useState } from 'react';
 import { CodePreview } from './../utils/code'
 import { Spin } from 'antd';
+import Title from 'antd/lib/typography/Title';
+import { flushSync, render } from 'react-dom';
 
-class CodeShow extends React.Component {
-    state = {
-        code: null,
-        loaded: false,
-    }
 
-    props = {
-        id: 0
+interface StatusProps {
+    submitId: number
+}
+
+interface RunInfo {
+    times: number
+    memory: number
+    returnCode: number
+}
+
+interface StatusState {
+    code: string,
+    ccInfo: string,
+    runInfo: Array<RunInfo>,
+    loaded: boolean,
+}
+
+class StatusShow extends React.Component<StatusProps> {
+    state: StatusState
+
+
+    constructor(props: StatusProps) {
+        super(props);
+        this.state = {
+            code: "",
+            ccInfo: "",
+            runInfo: [],
+            loaded: false,
+        }
     }
 
     async componentDidMount() {
-        const result = await getSubmit(this.props.id)
+        await this.flush(this.props.submitId)
+    }
+
+    async flush(id:number){
+        this.setState( {
+            code: "",
+            ccInfo: "",
+            runInfo: [],
+            loaded: false,
+        })
+        const result = await getSubmit(id)
         this.setState({
             code: result.code,
+            ccInfo: result.ccInfo,
+            runInfo: result.runInfo,
             loaded: true,
         })
     }
@@ -28,6 +64,30 @@ class CodeShow extends React.Component {
     render() {
         return (
             <div>
+                <Button onClick={async ()=>await this.flush(this.props.submitId)}>刷新</Button>
+                <Title level={4}>编译信息</Title>
+                {
+                    this.state.loaded ?
+                        <CodePreview>
+                            {this.state.ccInfo}
+                        </CodePreview> :
+                        <Spin />
+                }
+                <Title level={4}>运行信息</Title>
+                {
+                    this.state.loaded ?
+                        <Row>{
+                            this.state.runInfo.map((e, i) => {
+                                return <Col span={4}><Card title={`样例${i+1}`}>
+                                    {`运行时间:${e.times}`}<br></br>
+                                    {`运行内存:${e.memory}`}<br></br>
+                                    {`运行结果:${e.returnCode}`}
+                                </Card></Col>
+                            })}</Row>
+                        :
+                        <Spin />
+                }
+                <Title level={4}>代码</Title>
                 {
                     this.state.loaded ?
                         <CodePreview>
@@ -41,6 +101,7 @@ class CodeShow extends React.Component {
     }
 }
 
+let v = 1
 const columns: ProColumns[] = [
     {
         dataIndex: 'index',
@@ -51,7 +112,7 @@ const columns: ProColumns[] = [
         title: '题目ID',
         dataIndex: 'problemId',
         ellipsis: true,
-        render: (text,record) => {
+        render: (text, record) => {
             return <a href={'/problem/' + record.problemId}>{record.problemId}</a>
         }
     },
@@ -88,7 +149,7 @@ const columns: ProColumns[] = [
                 text: 'RE',
                 status: 'Error',
             },
-         
+
             MISS: {
                 text: 'MISS',
                 status: 'Processing',
@@ -126,13 +187,13 @@ const columns: ProColumns[] = [
             const [isModalVisible, setIsModalVisible] = useState(false);
             return [
                 <div>
-                    <a onClick={() => { setIsModalVisible(true) }}>查看代码</a>
-                    <Modal title="代码"
+                    <a onClick={() => { setIsModalVisible(true) }}>评测结果</a>
+                    <Modal title="评测结果"
                         visible={isModalVisible}
                         onOk={() => setIsModalVisible(false)}
                         onCancel={() => setIsModalVisible(false)}
                         width='90%'>
-                        <CodeShow id={record.id} />
+                        <StatusShow submitId={record.id} />
                     </Modal>
                 </div>
             ]

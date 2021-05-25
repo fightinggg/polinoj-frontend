@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Upload } from 'antd';
+import { Button, Col, message, Upload } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { createProblem, pageProblem } from '@/services/polin-oj/problem';
@@ -103,7 +103,8 @@ export default () => {
                 onFinish={async (value) => {
                     const result = await createProblem(value);
                     if (result != null) {
-                        console.log(result);
+                        message.success("创建题目成功")
+                        handleCreateProblemVisible(false)
                     }
                 }}
             // onValuesChange={handleProblem}
