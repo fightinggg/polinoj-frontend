@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Row } from 'antd';
+import { Col, Row, Spin } from 'antd';
 const ReactMarkdown = require('react-markdown')
 import { notification } from 'antd';
 import { Space, Card } from 'antd';
@@ -46,13 +46,14 @@ export class ProblemComponet extends React.Component<ProblemProps> {
         code: {
             lang: 'cpp',
             code: ''
-        }
+        },
+        loaded: false
     }
 
 
     async componentDidMount() {
         const result = await getProblem(this.props.problemId)
-        this.setState({ problem: result })
+        this.setState({ problem: result, loaded: true })
     }
 
 
@@ -87,18 +88,44 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                                 onBack={() => null}
                                 title={this.state.problem.title}
                             />
-                            <Title level={4}>输入描述</Title>
-                            <ReactMarkdown source={this.state.problem.input} />
-                            <Title level={4}>输出描述</Title>
-                            <ReactMarkdown source={this.state.problem.output} />
-                            <Title level={4}>输入样例</Title>
-                            <Paragraph copyable={{ tooltips: false }}>
-                                <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].input }} />
-                            </Paragraph>
-                            <Title level={4}>输出样例</Title>
-                            <Paragraph copyable={{ tooltips: false }} code={true}>
-                                <div dangerouslySetInnerHTML={{ __html: this.state.problem.sampleList[0].output }} />
-                            </Paragraph>
+                            <Title level={1}>题目描述</Title>
+                            {
+                                this.state.loaded ? <ReactMarkdown source={this.state.problem.description} /> : <Spin />
+                            }
+
+                            <Title level={1}>输入描述</Title>
+                            {
+                                this.state.loaded ? <ReactMarkdown source={this.state.problem.input} /> : <Spin />
+                            }
+                            <Title level={1}>输出描述</Title>
+                            {
+                                this.state.loaded ? <ReactMarkdown source={this.state.problem.output} /> : <Spin />
+                            }
+
+                            {
+                                this.state.loaded ?
+                                    this.state.problem.sampleList.map((o, i) =>
+                                    (
+                                        <div>
+                                            <Title level={1}>输入样例{i + 1}</Title>
+                                            {
+                                                <Paragraph copyable={{ tooltips: false }}>
+                                                    <div dangerouslySetInnerHTML={{ __html: o.input }} />
+                                                </Paragraph>
+                                            }
+                                            <Title level={1}>输出样例{i + 1}</Title>
+                                            {
+                                                <Paragraph copyable={{ tooltips: false }} code={true}>
+                                                    <div dangerouslySetInnerHTML={{ __html: o.output }} />
+                                                </Paragraph>
+                                            }
+                                        </div>)
+                                    )
+                                    : <Spin />
+                            }
+
+
+
                         </Space >
                     </Card>
 
@@ -152,7 +179,7 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                         />
                     </Card>
                 </Col>
-            </Row>
+            </Row >
         );
     }
 }
