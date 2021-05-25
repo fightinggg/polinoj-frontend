@@ -93,9 +93,9 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                             {
                                 this.state.loaded ?
                                 <div>
-                                    <text>时间限制: {this.state.problem.time}秒</text>
+                                    <text>时间限制: {this.state.problem.time?this.state.problem.time+"秒":"标准时间"}</text>
                                     <br></br>
-                                    <text>内存限制: {this.state.problem.memory}MB</text>
+                                    <text>内存限制: {this.state.problem.time?this.state.problem.memory+"MB":"标准空间"}</text>
                                 </div>
                                 : <Spin />
                             }
