@@ -9,6 +9,7 @@ import { Spin } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { flushSync, render } from 'react-dom';
 
+let timer: NodeJS.Timeout | null = null
 
 interface StatusProps {
     submitId: number
@@ -24,12 +25,12 @@ interface StatusState {
     code: string,
     ccInfo: string,
     runInfo: Array<RunInfo>,
+    status: string,
     loaded: boolean,
 }
 
 class StatusShow extends React.Component<StatusProps> {
     state: StatusState
-
 
     constructor(props: StatusProps) {
         super(props);
@@ -37,26 +38,42 @@ class StatusShow extends React.Component<StatusProps> {
             code: "",
             ccInfo: "",
             runInfo: [],
+            status: '2',
             loaded: false,
         }
     }
 
+
+
     async componentDidMount() {
         await this.flush(this.props.submitId)
+        timer = setInterval(() => this.flush(this.props.submitId, false), 3000)
     }
 
-    async flush(id:number){
-        this.setState( {
-            code: "",
-            ccInfo: "",
-            runInfo: [],
-            loaded: false,
-        })
+    async componentWillUnmount() {
+        // if (timer) {
+        //     clearInterval(this.timer)
+        // }
+    }
+
+
+    async flush(id: number, close = true) {
+        if (close) {
+            this.setState({
+                code: "",
+                ccInfo: "",
+                runInfo: [],
+                status: '2',
+                loaded: false,
+            })
+        }
         const result = await getSubmit(id)
+        console.log(result)
         this.setState({
             code: result.code,
             ccInfo: result.ccInfo,
             runInfo: result.runInfo,
+            status: result.status,
             loaded: true,
         })
     }
@@ -64,7 +81,7 @@ class StatusShow extends React.Component<StatusProps> {
     render() {
         return (
             <div>
-                <Button onClick={async ()=>await this.flush(this.props.submitId)}>刷新</Button>
+                <Button onClick={async () => await this.flush(this.props.submitId)}>刷新</Button>
                 <Title level={4}>编译信息</Title>
                 {
                     this.state.loaded ?
@@ -78,12 +95,17 @@ class StatusShow extends React.Component<StatusProps> {
                     this.state.loaded ?
                         <Row>{
                             this.state.runInfo.map((e, i) => {
-                                return <Col span={4}><Card title={`样例${i+1}`}>
+                                return <Col span={4}><Card title={`样例${i + 1}`}>
                                     {`运行时间:${e.times}`}<br></br>
                                     {`运行内存:${e.memory}`}<br></br>
                                     {`运行结果:${e.returnCode}`}
                                 </Card></Col>
-                            })}</Row>
+                            })}
+                            {this.state.status == 'PENDING' ?
+                                <Col span={4}><Card title={`测试中`}>
+                                    <Spin />
+                                </Card></Col> : <div />}
+                        </Row>
                         :
                         <Spin />
                 }
@@ -101,7 +123,6 @@ class StatusShow extends React.Component<StatusProps> {
     }
 }
 
-let v = 1
 const columns: ProColumns[] = [
     {
         dataIndex: 'index',
@@ -191,11 +212,17 @@ const columns: ProColumns[] = [
                     <Modal title="评测结果"
                         visible={isModalVisible}
                         onOk={() => setIsModalVisible(false)}
-                        onCancel={() => setIsModalVisible(false)}
+                        onCancel={() => {
+                            setIsModalVisible(false)
+                            if (timer) {
+                                clearInterval(timer)
+                            }
+                        }
+                        }
                         width='90%'>
                         <StatusShow submitId={record.id} />
                     </Modal>
-                </div>
+                </div >
             ]
         },
     },
