@@ -30,6 +30,7 @@ export async function submitProblems(body: any) {
 export async function pageStatus(params: any) {
   return await dealWithHttpResult(async () => {
     params.source = 'hdu'
+    params.pageIndex = params.current
     var result = await request('/api/submit/status', {
       params,
     })
@@ -38,6 +39,7 @@ export async function pageStatus(params: any) {
         data: result.data.list,
         pageSize: result.data.pageSize,
         current: result.data.pageIndex,
+        total: result.data.total
       }
     }
     return result;
