@@ -31,6 +31,7 @@ export class ProblemComponet extends React.Component<ProblemProps> {
             problemId: 0,
             title: null,
             description: null,
+            hint: null,
             input: null,
             output: null,
             sampleList: [{
@@ -88,6 +89,16 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                                 onBack={() => null}
                                 title={this.state.problem.title}
                             />
+                            <Title level={1}>资源限制</Title>
+                            {
+                                this.state.loaded ?
+                                <div>
+                                    <text>时间限制: {this.state.problem.time}秒</text>
+                                    <br></br>
+                                    <text>内存限制: {this.state.problem.memory}MB</text>
+                                </div>
+                                : <Spin />
+                            }
                             <Title level={1}>题目描述</Title>
                             {
                                 this.state.loaded ? <ReactMarkdown source={this.state.problem.description} /> : <Spin />
@@ -101,7 +112,10 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                             {
                                 this.state.loaded ? <ReactMarkdown source={this.state.problem.output} /> : <Spin />
                             }
-
+                            <Title level={1}>提示</Title>
+                            {
+                                this.state.loaded ? <ReactMarkdown source={this.state.problem.hint} /> : <Spin />
+                            }
                             {
                                 this.state.loaded ?
                                     this.state.problem.sampleList.map((o, i) =>
