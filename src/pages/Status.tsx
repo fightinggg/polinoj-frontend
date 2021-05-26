@@ -101,7 +101,7 @@ class StatusShow extends React.Component<StatusProps> {
                                     {`运行结果:${e.returnCode}`}
                                 </Card></Col>
                             })}
-                            {this.state.status == 'PENDING' ?
+                            {this.state.status == 'PROCESS' ?
                                 <Col span={4}><Card title={`测试中`}>
                                     <Spin />
                                 </Card></Col> : <div />}
