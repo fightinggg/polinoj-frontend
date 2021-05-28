@@ -47,15 +47,7 @@ class StatusShow extends React.Component<StatusProps> {
 
     async componentDidMount() {
         await this.flush(this.props.submitId)
-        timer = setInterval(() => this.flush(this.props.submitId, false), 3000)
     }
-
-    async componentWillUnmount() {
-        // if (timer) {
-        //     clearInterval(this.timer)
-        // }
-    }
-
 
     async flush(id: number, close = true) {
         if (close) {
@@ -79,6 +71,9 @@ class StatusShow extends React.Component<StatusProps> {
     }
 
     render() {
+        if (timer == null) {
+            timer = setInterval(() => this.flush(this.props.submitId, false), 3000)
+        }
         return (
             <div>
                 <Button onClick={async () => await this.flush(this.props.submitId)}>刷新</Button>
@@ -216,6 +211,7 @@ const columns: ProColumns[] = [
                             setIsModalVisible(false)
                             if (timer) {
                                 clearInterval(timer)
+                                timer = null
                             }
                         }
                         }

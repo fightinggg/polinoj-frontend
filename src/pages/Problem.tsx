@@ -22,6 +22,8 @@ const successInfo = (description: string, message: string) => {
 
 interface ProblemProps {
     problemId: 0,
+    contextId: 0,
+    canSubmitCode: boolean,
 }
 
 
@@ -46,10 +48,11 @@ export class ProblemComponet extends React.Component<ProblemProps> {
         },
         code: {
             lang: 'cpp',
-            code: ''
+            code: '',
         },
         loaded: false
     }
+
 
 
     async componentDidMount() {
@@ -57,9 +60,9 @@ export class ProblemComponet extends React.Component<ProblemProps> {
         this.setState({ problem: result, loaded: true })
     }
 
-
     async submitCode(body: any) {
-        body.problemId = this.state.problem.problemId
+        body.problemId = this.props.problemId
+        body.contextId = this.props.contextId
 
         const result = await submitProblems(body);
         if (result != null) {
@@ -81,7 +84,7 @@ export class ProblemComponet extends React.Component<ProblemProps> {
 
         return (
             <Row >
-                <Col span={12}>
+                <Col span={this.props.canSubmitCode ? 12 : 24}>
                     <Card>
                         <Space direction="vertical" size={20} style={{ width: '100%', height: '30%' }}>
                             <PageHeader
@@ -92,12 +95,12 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                             <Title level={1}>资源限制</Title>
                             {
                                 this.state.loaded ?
-                                <div>
-                                    <text>时间限制: {this.state.problem.time?this.state.problem.time+"秒":"标准时间"}</text>
-                                    <br></br>
-                                    <text>内存限制: {this.state.problem.time?this.state.problem.memory+"MB":"标准空间"}</text>
-                                </div>
-                                : <Spin />
+                                    <div>
+                                        <text>时间限制: {this.state.problem.time ? this.state.problem.time + "秒" : "标准时间"}</text>
+                                        <br></br>
+                                        <text>内存限制: {this.state.problem.time ? this.state.problem.memory + "MB" : "标准空间"}</text>
+                                    </div>
+                                    : <Spin />
                             }
                             <Title level={1}>题目描述</Title>
                             {
@@ -144,55 +147,59 @@ export class ProblemComponet extends React.Component<ProblemProps> {
                     </Card>
 
                 </Col>
-                <Col span={12}>
-                    <Card>
-                        <ProForm
-                            onFinish={
-                                async (v) => {
-                                    v.code = this.state.code.code;
-                                    await this.submitCode(v);
-                                }
-                            }
-                            onValuesChange={
-                                async (v) => {
-                                    if (v.language != undefined) {
+                {
+                    this.props.canSubmitCode ?
+                        <Col span={12}>
+                            <Card>
+                                <ProForm
+                                    onFinish={
+                                        async (v) => {
+                                            v.code = this.state.code.code;
+                                            await this.submitCode(v);
+                                        }
+                                    }
+                                    onValuesChange={
+                                        async (v) => {
+                                            if (v.language != undefined) {
+                                                this.setState({
+                                                    code: {
+                                                        lang: v.language,
+                                                        code: this.state.code.code
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+                                >
+                                    <ProFormSelect
+                                        name="language"
+                                        label="language"
+                                        valueEnum={{
+                                            cpp: 'C/C++',
+                                            java: 'Java',
+                                        }}
+                                        rules={[{ required: true, message: 'Please select your language!' }]}
+                                    />
+                                </ProForm>
+                                <br></br>
+                                <MonacoEditor
+                                    height="600"
+                                    language={this.state.code.lang}
+                                    options={options}
+                                    onChange={async (value) => {
                                         this.setState({
                                             code: {
-                                                lang: v.language,
-                                                code: this.state.code.code
+                                                lang: this.state.code.lang,
+                                                code: value
                                             }
                                         })
-                                    }
-                                }
-                            }
-                        >
-                            <ProFormSelect
-                                name="language"
-                                label="language"
-                                valueEnum={{
-                                    cpp: 'C/C++',
-                                    java: 'Java',
-                                }}
-                                rules={[{ required: true, message: 'Please select your language!' }]}
-                            />
-                        </ProForm>
-                        <br></br>
-                        <MonacoEditor
-                            height="600"
-                            language={this.state.code.lang}
-                            options={options}
-                            onChange={async (value) => {
-                                this.setState({
-                                    code: {
-                                        lang: this.state.code.lang,
-                                        code: value
-                                    }
-                                })
-                            }}
+                                    }}
 
-                        />
-                    </Card>
-                </Col>
+                                />
+                            </Card>
+                        </Col>
+                        : <div></div>
+                }
             </Row >
         );
     }
@@ -200,5 +207,9 @@ export class ProblemComponet extends React.Component<ProblemProps> {
 
 
 export default function Problem(props: any) {
-    return <ProblemComponet problemId={props.location.pathname.split('/').lastItem}></ProblemComponet>
+    return  <Card> <ProblemComponet
+        problemId={props.location.pathname.split('/').lastItem}
+        contextId={0}
+        canSubmitCode={true}
+    ></ProblemComponet></Card>
 }

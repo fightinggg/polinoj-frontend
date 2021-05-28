@@ -41,6 +41,18 @@ export async function getContext(id: number) {
 }
 
 
+export async function getContextRank(id: number) {
+  return await dealWithHttpResult(async () => {
+    return await request<any>('/api/context/rank', {
+      method: 'GET',
+      params: {
+        contextId: id
+      }
+    });
+  })
+}
+
+
 
 
 

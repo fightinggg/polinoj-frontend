@@ -50,20 +50,9 @@ const columns: ProColumns[] = [
         title: '操作',
         valueType: 'option',
         render: (text, record, _, action) => [
-            <a key="editable" onClick={() => {
-                action.startEditable?.(record.id);
-            }}>编辑</a>,
             <a href={'/context/' + record.id} rel="noopener noreferrer" key="view">
                 查看
-            </a>,
-            <TableDropdown
-                key="actionGroup"
-                onSelect={() => action.reload()}
-                menus={[
-                    { key: 'copy', name: '复制' },
-                    { key: 'delete', name: '删除' },
-                ]}
-            />,
+            </a>
         ],
     },
 ];
@@ -136,15 +125,12 @@ export default () => {
                 </Form.Item>
             </ModalForm>
 
-
-
             <ProTable
                 columns={columns}
                 actionRef={actionRef}
                 request={
                     pageContext
                 }
-
 
                 editable={{
                     type: 'multiple',
