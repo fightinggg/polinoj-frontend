@@ -1,14 +1,13 @@
 import React from 'react'
 import { ProblemComponet } from './Problem'
-import { Tabs } from 'antd';
+import { Badge, Tabs } from 'antd';
 import { getContext, getContextRank } from '@/services/polin-oj/context'
 import { Card } from 'antd';
-import { Table } from 'antd';
 const { TabPane } = Tabs;
-import { Typography, Space } from 'antd';
-import { json } from 'express';
+import { Typography } from 'antd';
 import ProTable from '@ant-design/pro-table';
 import { toInteger } from 'lodash';
+import { StarTwoTone } from '@ant-design/icons';
 const { Text, Link } = Typography;
 
 interface RankListProps {
@@ -31,7 +30,7 @@ class RankList extends React.Component<RankListProps> {
                 key: k,
                 dataIndex: i,
                 title: k,
-                onCell: (record) => {
+                onCell: (record: any) => {
                     if (record[i].accept) {
                         return {
                             style: {
@@ -70,35 +69,39 @@ class RankList extends React.Component<RankListProps> {
 
         const columns = [
             {
-                key: 'star',
-                dataIndex: 'star',
-                title: '打星'
-            },
-            {
-                key: 'rank',
-                dataIndex: 'rank',
-                title: '排名',
-
-            },
-            {
                 key: 'userName',
                 dataIndex: 'userName',
-                title: '用户'
-            },
-            {
-                key: 'score',
-                dataIndex: 'score',
-                title: '分数'
+                title: '用户',
+                render: (text: any, record: any) =>
+                (<div>
+                    {record.star ?
+                        <StarTwoTone />
+                        :
+                        <Badge count={record.rank}
+                            style={{
+                                backgroundColor: record.rank == 1 ? '#FFD700'
+                                    : record.rank == 2 ? '#E6E8FA'
+                                        : '#B5A642'
+                            }}
+                        />}
+                    {record.userName}
+                </div>)
             },
             {
                 key: 'acceptCount',
                 dataIndex: 'acceptCount',
                 title: '过题数'
             },
+            {
+                key: 'score',
+                dataIndex: 'score',
+                title: '分数'
+            },
+
             ...problemColums
         ]
         const data = result.list.map((e: any) => ({
-            star: e.star ? '是' : '否',
+            star: e.star,
             rank: e.rank,
             score: e.score,
             acceptCount: e.acceptCount,
@@ -115,17 +118,13 @@ class RankList extends React.Component<RankListProps> {
     async getData(id: number) {
         const result = await getContextRank(id);
         let data = result.list.map((e: any) => ({
-            star: e.star ? '是' : '否',
+            star: e.star,
             rank: e.rank,
             score: toInteger(e.score / 1000 / 60),
             acceptCount: e.acceptCount,
             userName: e.userName,
             ...e.problemStateVOList
         }));
-        // for (let i = 0; i < 100; i++) {
-        //     data.push(Object.assign({}, data[0]))
-        //     data[i].rank = i
-        // }
         return {
             data: data,
             pageSize: data.lenght,
@@ -137,7 +136,6 @@ class RankList extends React.Component<RankListProps> {
     render() {
         return (
             <ProTable columns={this.state.columns}
-                // dataSource={this.state.data}
                 request={async () => await this.getData(this.props.contextId)}
                 search={false}
                 style={{ overflow: 'auto' }} />
@@ -156,7 +154,7 @@ export default class Context extends React.Component {
     }
 
     async componentDidMount() {
-        const context = await getContext(this.props.location.pathname.split('/').lastItem);
+        const context = await getContext(location.pathname.split('/').lastItem);
         this.setState(context);
     }
 
@@ -171,7 +169,7 @@ export default class Context extends React.Component {
                                 <Card> <Link href={`/problem/${id}`} >题库链接</Link></Card>
                                 <ProblemComponet
                                     problemId={id}
-                                    contextId={this.props.location.pathname.split('/').lastItem}
+                                    contextId={location.pathname.split('/').lastItem}
                                     canSubmitCode={(this.state.endTime || 0) > new Date().valueOf()}
                                 ></ProblemComponet>
                             </div>
@@ -182,7 +180,7 @@ export default class Context extends React.Component {
 
                 {/* dashborad */}
                 <TabPane tab={"榜单"}>
-                    <RankList contextId={this.props.location.pathname.split('/').lastItem}></RankList>
+                    <RankList contextId={location.pathname.split('/').lastItem}></RankList>
                 </TabPane>
             </Tabs></Card>
         );

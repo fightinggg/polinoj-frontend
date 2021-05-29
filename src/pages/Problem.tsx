@@ -21,8 +21,8 @@ const successInfo = (description: string, message: string) => {
 
 
 interface ProblemProps {
-    problemId: 0,
-    contextId: 0,
+    problemId: number,
+    contextId: any,
     canSubmitCode: boolean,
 }
 
@@ -207,9 +207,9 @@ export class ProblemComponet extends React.Component<ProblemProps> {
 
 
 export default function Problem(props: any) {
-    return  <Card> <ProblemComponet
+    return <Card> <ProblemComponet
         problemId={props.location.pathname.split('/').lastItem}
-        contextId={0}
+        contextId={null}
         canSubmitCode={true}
     ></ProblemComponet></Card>
 }

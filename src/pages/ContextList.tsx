@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message } from 'antd';
+import { Button, message, Switch } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
-import { createContext, pageContext } from "@/services/polin-oj/context"
+import { createContext, joinContext, pageContext, updateJoinContext } from "@/services/polin-oj/context"
 import { PageContainer } from '@ant-design/pro-layout';
 import ModalForm from '@ant-design/pro-form/lib/layouts/ModalForm';
 import { ProFormText } from '@ant-design/pro-form';
@@ -14,53 +14,12 @@ import { Select } from 'antd';
 const { RangePicker } = DatePicker;
 
 
-const columns: ProColumns[] = [
-    {
-        dataIndex: 'index',
-        valueType: 'indexBorder',
-        width: 48,
-    },
-    {
-        title: '比赛id',
-        dataIndex: 'id',
-    },
-    {
-        title: '比赛名字',
-        dataIndex: 'name',
-    },
-    {
-        title: '比赛开始时间',
-        dataIndex: 'beginTime',
-        render: (text, record, _, action) => {
-            return new Date(record.beginTime).toString()
-        }
-    },
-    {
-        title: '比赛结束时间',
-        dataIndex: 'endTime',
-        render: (text, record, _, action) => {
-            return new Date(record.endTime).toString()
-        }
-    },
-    {
-        title: '比赛负责人',
-        dataIndex: 'ownerName',
-    },
-    {
-        title: '操作',
-        valueType: 'option',
-        render: (text, record, _, action) => [
-            <a href={'/context/' + record.id} rel="noopener noreferrer" key="view">
-                查看
-            </a>
-        ],
-    },
-];
 
 
 export default () => {
     const actionRef = useRef<ActionType>();
     const [createContextVisible, handleCreateContextVisible] = useState<boolean>(false);
+
 
     return (
         <PageContainer>
@@ -126,7 +85,72 @@ export default () => {
             </ModalForm>
 
             <ProTable
-                columns={columns}
+                columns={
+                    [
+                        {
+                            dataIndex: 'index',
+                            valueType: 'indexBorder',
+                            width: 48,
+                        },
+                        {
+                            title: '比赛id',
+                            dataIndex: 'id',
+                        },
+                        {
+                            title: '比赛名字',
+                            dataIndex: 'name',
+                        },
+                        {
+                            title: '比赛开始时间',
+                            dataIndex: 'beginTimeString',
+                        },
+                        {
+                            title: '比赛结束时间',
+                            dataIndex: 'endTimeString',
+                        },
+                        {
+                            title: '比赛负责人',
+                            dataIndex: 'ownerName',
+                        },
+                        {
+                            title: '操作',
+                            valueType: 'option',
+                            render: (text, record, _, action) => [
+                                record.join ?
+                                    <Button
+                                        type="link"
+                                        href={'/context/' + record.id}
+                                        disabled={record.beginTime > new Date().getTime()}>
+                                        查看
+                            </Button> :
+                                    <Button
+                                        type="primary"
+                                        onClick={async () => {
+                                            await joinContext(record.id)
+                                            actionRef.current?.reload()
+                                        }}
+                                        hidden={record.join}>
+                                        报名
+                            </Button>
+                            ],
+                        },
+                        {
+                            title: '打星',
+                            render: (text, record) => {
+                                return <Switch
+                                    checked={record.star}
+                                    disabled={!record.join || new Date().getTime() > record.beginTime}
+                                    onChange={async (c) => {
+                                        await updateJoinContext(record.id, c)
+                                        actionRef.current?.reload()
+                                    }
+                                    }
+                                />
+                            }
+                        }
+                    ]}
+
+
                 actionRef={actionRef}
                 request={
                     pageContext
@@ -146,9 +170,10 @@ export default () => {
                 dateFormatter="string"
                 headerTitle="比赛列表"
                 toolBarRender={() => [
-                    <Button key="button" icon={<PlusOutlined />} type="primary" onClick={
-                        () => { handleCreateContextVisible(true) }
-                    }>
+                    <Button key="button"
+                        icon={<PlusOutlined />}
+                        type="primary"
+                        onClick={() => { handleCreateContextVisible(true) }}>
                         新建
                 </Button>
                 ]}

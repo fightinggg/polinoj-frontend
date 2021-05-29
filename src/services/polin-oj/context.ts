@@ -53,6 +53,29 @@ export async function getContextRank(id: number) {
 }
 
 
+export async function joinContext(id: number) {
+  return await dealWithHttpResult(async () => {
+    return await request<any>('/api/context/join', {
+      method: 'POST',
+      params: {
+        contextId: id
+      }
+    });
+  })
+}
+
+
+export async function updateJoinContext(contextId: number, star: boolean) {
+  return await dealWithHttpResult(async () => {
+    return await request<any>('/api/context/join/update', {
+      method: 'POST',
+      data: {
+        contextId,
+        star,
+      }
+    });
+  })
+}
 
 
 
