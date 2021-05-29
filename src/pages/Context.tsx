@@ -31,7 +31,6 @@ class RankList extends React.Component<RankListProps> {
                 key: k,
                 dataIndex: i,
                 title: k,
-                style: { background: 'red' },
                 onCell: (record) => {
                     if (record[i].accept) {
                         return {
@@ -54,9 +53,13 @@ class RankList extends React.Component<RankListProps> {
                     <div >
                         {
                             record[i].accept ?
-                                <Text>+{record[i].punish + 1}</Text>
+                                <div>
+                                    <Text>+{record[i].punish + 1} try</Text>
+                                    {/* <br></br> */}
+                                    {/* <Text>score:{toInteger(record[i].score / 1000 / 60)}</Text> */}
+                                </div>
                                 : record[i].punish ?
-                                    <Text>+{record[i].punish + 1}</Text>
+                                    <Text>+{record[i].punish + 1} try</Text>
                                     : <div></div>
                         }
 

@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
 import { currentUser as queryCurrentUser } from './services/polin-oj/user';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import { stringify } from 'querystring';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -31,7 +32,25 @@ export async function getInitialState(): Promise<{
       const currentUser = await queryCurrentUser();
       return currentUser;
     } catch (error) {
-      history.push(loginPath);
+
+      const { query = {}, pathname } = history.location;
+      const { redirect } = query;
+      console.log("queryCurrentUserError: ", history.location)
+      // Note: There may be security issues, please note
+      if (window.location.pathname !== '/user/login' && !redirect) {
+        console.log("enter");
+        console.log("pathname",pathname);
+        history.replace({
+          pathname: '/user/login',
+          search: stringify({
+            redirect: pathname,
+          }),
+        });
+      }
+
+
+
+      //history.push(loginPath);
     }
     return undefined;
   };
@@ -63,6 +82,22 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       const { location } = history;
       // 如果没有登录，重定向到 login
       if (!initialState?.currentUser && location.pathname !== loginPath && location.pathname !== registerPath) {
+
+
+//         const { query = {}, pathname } = history.location;
+//         const { redirect } = query;
+//         console.log(location)
+//         // Note: There may be security issues, please note
+//         if (window.location.pathname !== '/user/login' && !redirect) {
+//           history.replace({
+//             pathname: '/user/login',
+//             search: stringify({
+//               redirect: pathname,
+//             }),
+//           });
+//         }
+
+
         history.push(loginPath);
       }
     },
@@ -124,10 +159,10 @@ const errorHandler = (error: ResponseError) => {
   }
 
   // console.log(error.data)
-  if(error.data!=null){
+  if (error.data != null) {
     notification.error({
       description: error.data.msg,
-      message: '错误代码:'+error.data.code,
+      message: '错误代码:' + error.data.code,
     });
   } else if (!response) {
     notification.error({
